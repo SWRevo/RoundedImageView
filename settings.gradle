@@ -1,0 +1,3 @@
+rootProject.name = "RoundedImageSample"
+include ':app'
+include ':library'
