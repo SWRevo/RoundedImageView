@@ -1,1 +1,125 @@
 # RoundedImageView
+
+[![](https://jitpack.io/v/SWRevo/RoundedImageView.svg)](https://jitpack.io/#SWRevo/RoundedImageView)
+
+A fast ImageView (and Drawable) that supports rounded corners (and ovals or circles) based on the original [example from Romain Guy](http://www.curious-creature.org/2012/12/11/android-recipe-1-image-with-rounded-corners/) & Improvement from [vinc3m1/RoundedImageView](https://github.com/vinc3m1/RoundedImageView) . It supports many additional features including ovals, rounded rectangles, ScaleTypes and TileModes.
+
+![RoundedImageView screenshot](https://raw.github.com/makeramen/RoundedImageView/master/screenshot.png)
+![RoundedImageView screenshot with ovals](https://raw.github.com/makeramen/RoundedImageView/master/screenshot-oval.png)
+
+There are many ways to create rounded corners in android, but this is the fastest and best one that I know of because it:
+* does **not** create a copy of the original bitmap
+* does **not** use a clipPath which is not hardware accelerated and not anti-aliased.
+* does **not** use setXfermode to clip the bitmap and draw twice to the canvas.
+
+If you know of a better method, let me know (or even better open a pull request)!
+
+Also has proper support for:
+* Borders (with Colors and ColorStateLists)
+* Ovals and Circles
+* All `ScaleType`s
+  * Borders are drawn at view edge, not bitmap edge
+  * Except on edges where the bitmap is smaller than the view
+  * Borders are **not** scaled up/down with the image (correct width and radius are maintained)
+* Anti-aliasing
+* Transparent backgrounds
+* Hardware acceleration
+* Support for LayerDrawables (including TransitionDrawables)
+* TileModes for repeating drawables
+
+## Known Issues
+
+- VectorDrawables are **not** supported. This library is designed for BitmapDrawables only. Other drawables will likely fail or cause high memory usage. 
+- ColorDrawables are poorly supported, use your own rounded VectorDrawables instead if you want less memory pressure.
+- Glide transforms are **not** supported, please use [wasabeef/glide-transformations](https://github.com/wasabeef/glide-transformations) if you want to round images loaded from Glide.
+
+## Gradle
+
+Add the following to your `build.gradle` to use:
+```
+repositories {
+    maven { url 'https://jitpack.io' }
+}
+
+dependencies {
+    implementation 'com.github.SWRevo:RoundedImageView:1.1.0'
+}
+```
+
+
+## Usage
+
+Define in xml:
+
+```xml
+<id.indosw.roundedimage.RoundedImageView
+      android:id="@+id/imageView1"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_alignParentTop="true"
+      android:layout_alignParentBottom="true"
+      android:layout_alignParentStart="true"
+      android:layout_alignParentEnd="true"
+      android:padding="10dip"
+      android:src="@drawable/photo1"
+      android:scaleType="center"
+      app:riv_corner_radius="30dip"
+      app:riv_border_width="3dip"
+      app:riv_oval="false"
+      app:riv_border_color="@color/border"
+      />
+```
+
+Or in code:
+
+```java
+RoundedImageView riv = new RoundedImageView(context);
+riv.setScaleType(ScaleType.CENTER_CROP);
+riv.setCornerRadius((float) 10);
+riv.setBorderWidth((float) 2);
+riv.setBorderColor(Color.DKGRAY);
+riv.mutateBackground(true);
+riv.setImageDrawable(drawable);
+riv.setBackground(backgroundDrawable);
+riv.setOval(true);
+riv.setTileModeX(Shader.TileMode.REPEAT);
+riv.setTileModeY(Shader.TileMode.REPEAT);
+```
+
+### Picasso
+
+To make a Transformation for Picasso:
+
+```java
+Transformation transformation = new RoundedTransformationBuilder()
+          .borderColor(Color.BLACK)
+          .borderWidthDp(3)
+          .cornerRadiusDp(30)
+          .oval(false)
+          .build();
+
+Picasso.get()
+    .load(url)
+    .fit()
+    .transform(transformation)
+    .into(imageView);
+```
+
+
+
+
+## License
+
+    Copyright 2017 Vincent Mi
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
